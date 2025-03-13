@@ -1,6 +1,6 @@
 {
   "name": "uniq-overlay-kit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -8,6 +8,19 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniqueeest/uniq-pop-kit.git",
+    "directory": "packages/overlay"
+  },
+  "bugs": {
+    "url": "https://github.com/uniqueeest/uniq-pop-kit/issues"
+  },
+  "keywords": [
+    "overlay",
+    "react",
+    "ui"
   ],
   "exports": {
     ".": {
