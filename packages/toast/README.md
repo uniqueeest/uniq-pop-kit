@@ -39,7 +39,64 @@ function App() {
 }
 ```
 
-### 2. Using within components
+### 2. Implement a Toast component
+
+This library only provides toast state management logic and does not include a UI component. You need to implement your own Toast component:
+
+```tsx
+import { useToast } from 'uniq-toast-kit';
+
+export const Toast = () => {
+  const { overlayList, hideToast } = useToast();
+
+  return (
+    <section className="fixed top-4 right-4 z-50 flex flex-col gap-4">
+      {overlayList.map((overlay) => {
+        const { id, title, description } = overlay;
+
+        return (
+          <div key={id} className="bg-white rounded-lg shadow p-4 flex items-center" role="alert">
+            {/* Icon area */}
+            <div className={`w-8 h-8 rounded-lg ${title === 'Error' ? 'bg-red-100' : 'bg-blue-100'}`}>
+              {/* Icon content */}
+            </div>
+
+            {/* Text area */}
+            <div className="ml-3">
+              <h3 className="text-[16px]">{title}</h3>
+              <p className="text-[14px]">{description}</p>
+            </div>
+
+            {/* Close button */}
+            <button type="button" className="ml-auto p-1.5" onClick={() => hideToast(id)}>
+              {/* Close icon */}
+            </button>
+          </div>
+        );
+      })}
+    </section>
+  );
+};
+```
+
+Add your implemented Toast component to your application:
+
+```tsx
+import { ToastProvider, ToastInitializer } from 'uniq-toast-kit';
+import { Toast } from './Toast';
+
+function App() {
+  return (
+    <ToastProvider>
+      <ToastInitializer />
+      <Toast />
+      <YourApp />
+    </ToastProvider>
+  );
+}
+```
+
+### 3. Using within components
 
 ```tsx
 import { useToast } from 'uniq-toast-kit';
@@ -59,7 +116,7 @@ function YourComponent() {
 }
 ```
 
-### 3. Using externally via API
+### 4. Using externally via API
 
 ```tsx
 import { toastApi } from 'uniq-toast-kit';
@@ -119,7 +176,15 @@ hideToast('toast-id');
 
 #### overlayList
 
-Returns the list of currently displayed toasts.
+Returns the list of currently displayed toasts. Each toast object has the following properties:
+
+```tsx
+{
+  id: string,       // Unique toast ID
+  title: string,    // Toast title
+  description: string, // Toast content
+}
+```
 
 ### toastApi
 
@@ -137,6 +202,7 @@ toastApi.create({
 - `ToastProvider` must be placed at the top level of your application
 - `ToastInitializer` must be inside the `ToastProvider`
 - `ToastInitializer` is required for external API usage
+- This library does not provide toast UI components, so you need to implement your own UI component
 
 ## Requirements
 
