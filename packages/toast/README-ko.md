@@ -37,7 +37,64 @@ function App() {
 }
 ```
 
-### 2. 컴포넌트 내부에서 사용하기
+### 2. Toast 컴포넌트 구현하기
+
+이 라이브러리는 토스트 상태 관리 로직만 제공하며, UI 컴포넌트는 직접 구현해야 합니다:
+
+```tsx
+import { useToast } from 'uniq-toast-kit';
+
+export const Toast = () => {
+  const { overlayList, hideToast } = useToast();
+
+  return (
+    <section className="fixed top-4 right-4 z-50 flex flex-col gap-4">
+      {overlayList.map((overlay) => {
+        const { id, title, description } = overlay;
+
+        return (
+          <div key={id} className="bg-white rounded-lg shadow p-4 flex items-center" role="alert">
+            {/* 아이콘 영역 */}
+            <div className={`w-8 h-8 rounded-lg ${title === '오류' ? 'bg-red-100' : 'bg-blue-100'}`}>
+              {/* 아이콘 내용 */}
+            </div>
+
+            {/* 텍스트 영역 */}
+            <div className="ml-3">
+              <h3 className="text-[16px]">{title}</h3>
+              <p className="text-[14px]">{description}</p>
+            </div>
+
+            {/* 닫기 버튼 */}
+            <button type="button" className="ml-auto p-1.5" onClick={() => hideToast(id)}>
+              {/* 닫기 아이콘 */}
+            </button>
+          </div>
+        );
+      })}
+    </section>
+  );
+};
+```
+
+구현한 Toast 컴포넌트를 애플리케이션에 추가합니다:
+
+```tsx
+import { ToastProvider, ToastInitializer } from 'uniq-toast-kit';
+import { Toast } from './Toast';
+
+function App() {
+  return (
+    <ToastProvider>
+      <ToastInitializer />
+      <Toast />
+      <YourApp />
+    </ToastProvider>
+  );
+}
+```
+
+### 3. 컴포넌트 내부에서 사용하기
 
 ```tsx
 import { useToast } from 'uniq-toast-kit';
@@ -57,7 +114,7 @@ function YourComponent() {
 }
 ```
 
-### 3. API를 통해 외부에서 사용하기
+### 4. API를 통해 외부에서 사용하기
 
 ```tsx
 import { toastApi } from 'uniq-toast-kit';
@@ -117,7 +174,15 @@ hideToast('toast-id');
 
 #### overlayList
 
-현재 표시된 토스트 목록을 반환합니다.
+현재 표시된 토스트 목록을 반환합니다. 각 토스트 객체는 다음 속성을 가집니다:
+
+```tsx
+{
+  id: string,       // 토스트 고유 ID
+  title: string,    // 토스트 제목
+  description: string, // 토스트 내용
+}
+```
 
 ### toastApi
 
@@ -135,6 +200,7 @@ toastApi.create({
 - `ToastProvider`는 애플리케이션의 최상위 레벨에 위치해야 합니다.
 - `ToastInitializer`는 반드시 `ToastProvider` 내부에 있어야 합니다.
 - 외부 API 사용을 위해서는 `ToastInitializer`가 필요합니다.
+- 이 라이브러리는 토스트 UI를 제공하지 않으므로, 직접 UI 컴포넌트를 구현해야 합니다.
 
 ## 요구사항
 
