@@ -22,7 +22,7 @@ export const useDismissOnUserInteraction = () => {
 
     return () => {
       DEFAULT_EVENTS.forEach((ev) =>
-        document.removeEventListener(ev, onInteract, { capture: true } as any),
+        document.removeEventListener(ev, onInteract, { capture: true }),
       );
     };
   }, []);
