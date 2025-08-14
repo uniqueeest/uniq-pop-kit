@@ -62,14 +62,14 @@ const OverlayTestComponent = () => {
 describe('Overlay System', () => {
   beforeEach(() => {
     const overlayContainer = document.createElement('div');
-    overlayContainer.id = 'overlay-container';
+    overlayContainer.id = 'uniq-overlay-container';
     document.body.appendChild(overlayContainer);
   });
 
   afterEach(() => {
     cleanup();
     overlayStore.clear();
-    const container = document.getElementById('overlay-container');
+    const container = document.getElementById('uniq-overlay-container');
     if (container) {
       document.body.removeChild(container);
     }
@@ -89,7 +89,7 @@ describe('Overlay System', () => {
       const overlayElement = await screen.findByText('Test Message');
       expect(overlayElement).toBeInTheDocument();
 
-      const container = document.getElementById('overlay-container');
+      const container = document.getElementById('uniq-overlay-container');
       expect(container).toContainElement(overlayElement);
 
       await act(async () => {
@@ -197,6 +197,118 @@ describe('Overlay System', () => {
       });
 
       expect(screen.queryByText('Test Message')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('dismissOnInteraction', () => {
+    beforeEach(() => {
+      const overlayContainer = document.createElement('div');
+      overlayContainer.id = 'overlay-container';
+      
+      document.body.appendChild(overlayContainer);
+    });
+
+    afterEach(() => {
+      cleanup();
+      overlayStore.clear();
+      const el = document.getElementById('overlay-container');
+      if (el) document.body.removeChild(el);
+    });
+
+    it('default (false): should NOT close on user interaction', async () => {
+      render(
+        <OverlayContext>
+          <div />
+        </OverlayContext>
+      );
+
+      act(() => {
+        overlay.open(<TestOverlay overlayKey="keep" message="Should stay" />);
+      });
+
+      expect(await screen.findByText('Should stay')).toBeInTheDocument();
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
+
+      await act(async () => { await Promise.resolve(); });
+
+      expect(screen.getByText('Should stay')).toBeInTheDocument();
+    });
+
+    it('dismissOnInteraction=true: should close on click', async () => {
+      render(
+        <OverlayContext>
+          <div />
+        </OverlayContext>
+      );
+
+      let resolved: unknown = undefined;
+      act(() => {
+        overlay
+          .open(<TestOverlay overlayKey="click-close" message="Close me" />, {
+            dismissOnInteraction: true,
+          })
+          .then((v) => {
+            resolved = v;
+          });
+      });
+
+      expect(await screen.findByText('Close me')).toBeInTheDocument();
+
+      fireEvent.mouseDown(document.body);
+
+      await act(async () => { await Promise.resolve(); });
+
+      expect(screen.queryByText('Close me')).not.toBeInTheDocument();
+      expect(resolved).toBe('Overlay removed');
+    });
+
+    it('dismissOnInteraction=true: should close on keyboard input', async () => {
+      render(
+        <OverlayContext>
+          <div />
+        </OverlayContext>
+      );
+
+      act(() => {
+        overlay.open(<TestOverlay overlayKey="key-close" message="Close key" />, {
+          dismissOnInteraction: true,
+        });
+      });
+
+      expect(await screen.findByText('Close key')).toBeInTheDocument();
+
+      fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
+
+      await act(async () => { await Promise.resolve(); });
+
+      expect(screen.queryByText('Close key')).not.toBeInTheDocument();
+    });
+
+    it('dismissOnInteraction=true: should close only the top-most overlay when multiple are open', async () => {
+      render(
+        <OverlayContext>
+          <div />
+        </OverlayContext>
+      );
+
+      act(() => {
+        overlay.open(<TestOverlay overlayKey="first" message="First" />);
+        overlay.open(<TestOverlay overlayKey="second" message="Second" />, {
+          dismissOnInteraction: true,
+        });
+      });
+
+      expect(await screen.findByText('First')).toBeInTheDocument();
+      expect(await screen.findByText('Second')).toBeInTheDocument();
+
+      fireEvent.mouseDown(document.body);
+
+      await act(async () => { await Promise.resolve(); });
+
+      expect(screen.getByText('First')).toBeInTheDocument();
+      expect(screen.queryByText('Second')).not.toBeInTheDocument();
     });
   });
 });

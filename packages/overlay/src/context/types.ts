@@ -5,6 +5,7 @@ export type OverlayProps = {
   overlayKey: string;
   resolve?: (value: unknown) => void;
   duration?: number;
+  dismissOnInteraction?: boolean;
 };
 
 export type OverlayType<P = OverlayProps> = (props: P) => any;
