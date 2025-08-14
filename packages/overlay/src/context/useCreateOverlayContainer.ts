@@ -3,7 +3,7 @@ import { OVERLAY_ID } from './constants';
 
 export const useCreateOverlayContainer = () => {
   useEffect(() => {
-    if (document.getElementById(OVERLAY_ID))  return;
+    if (document.getElementById(OVERLAY_ID)) return;
 
     const modalEl = document.createElement('div');
 
