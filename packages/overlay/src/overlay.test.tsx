@@ -230,7 +230,6 @@ describe('Overlay System', () => {
 
       fireEvent.mouseDown(document.body);
       fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
-      fireEvent.wheel(document);
 
       await act(async () => { await Promise.resolve(); });
 

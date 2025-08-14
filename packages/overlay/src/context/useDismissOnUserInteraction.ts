@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { overlayStore } from './store';
 
-const DEFAULT_EVENTS = ['mousedown', 'touchstart', 'keydown', 'wheel'];
+const DEFAULT_EVENTS = ['mousedown', 'touchstart', 'keydown'];
 
 export const useDismissOnUserInteraction = () => {
   useEffect(() => {
@@ -14,6 +14,12 @@ export const useDismissOnUserInteraction = () => {
       const { props } = current;
 
       if (props.dismissOnInteraction === false) return;
+
+      if (e.type === 'keydown') {
+        const ke = e as KeyboardEvent;
+
+        if (!(ke.key === 'Escape' || ke.code === 'Escape'))  return;
+      }
 
       overlayStore.remove(current.overlayKey);
     };
