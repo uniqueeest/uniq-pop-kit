@@ -4,7 +4,7 @@ import { overlayStore } from './context/store';
 import { randomId } from './utils';
 import { OverlayProps, ReactOverlayElement } from './context/types';
 
-function open<T>(element: ReactOverlayElement, options?: { duration?: number }): Promise<T> {
+function open<T>(element: ReactOverlayElement, options?: { duration?: number; dismissOnInteraction?: boolean; }): Promise<T> {
   if (!isValidElement(element)) {
     throw new Error('Invalid React element provided to overlay.open');
   }
@@ -18,6 +18,7 @@ function open<T>(element: ReactOverlayElement, options?: { duration?: number }):
   return overlayStore.push(overlayKey, OverlayComponent, {
     ...props,
     duration: options?.duration,
+    dismissOnInteraction: options?.dismissOnInteraction ?? false,
   }) as Promise<T>;
 }
 
