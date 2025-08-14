@@ -1,7 +1,7 @@
 import * as ReactDOM from 'react-dom';
-import { useOverlay } from './useOverlay';
 
-const OVERLAY_ID = 'overlay-container';
+import { useOverlay } from './useOverlay';
+import { OVERLAY_ID } from './constants';
 
 export const OverlayRenderer = () => {
   const overlays = useOverlay();
