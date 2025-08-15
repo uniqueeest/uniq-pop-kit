@@ -52,7 +52,7 @@ const createOverlayStore = () => {
 
       if (props.duration && props.duration > 0) {
         setTimeout(() => {
-          dispatch({ type: 'REMOVE', payload: { overlayKey } });
+          overlayItem.resolve('Overlay removed');
         }, props.duration);
       }
     });
@@ -61,15 +61,14 @@ const createOverlayStore = () => {
   const pop = () => {
     const current = getCurrentOverlay();
     if (current) {
-      current.resolve('Overlay closed');
-      dispatch({ type: 'POP' });
+      remove(current.overlayKey, 'Overlay closed');
     }
   };
 
-  const remove = (overlayKey: string) => {
+  const remove = (overlayKey: string, reason: unknown = 'Overlay removed') => {
     const overlay = state.stack.find((item) => item.overlayKey === overlayKey);
     if (overlay) {
-      overlay.resolve('Overlay removed');
+      overlay.resolve(reason);
       dispatch({ type: 'REMOVE', payload: { overlayKey } });
     }
   };
