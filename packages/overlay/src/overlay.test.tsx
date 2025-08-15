@@ -152,6 +152,45 @@ describe('Overlay System', () => {
 
       vi.useRealTimers();
     });
+
+    it('should resolve promise when auto-closed by duration', async () => {
+      vi.useFakeTimers();
+
+      try {
+        render(
+          <OverlayContext>
+            <div />
+          </OverlayContext>
+        );
+
+        let resolved: unknown = undefined;
+
+        act(() => {
+          overlay.open(<TestOverlay overlayKey="auto-close" message="Auto Close" />, { duration: 1000 }).then((v) => {
+            resolved = v;
+          });
+        });
+
+        await act(async () => {
+          await Promise.resolve();
+        });
+
+        expect(screen.getByText('Auto Close')).toBeInTheDocument();
+
+        await act(async () => {
+          vi.advanceTimersByTime(1000);
+        });
+
+        await act(async () => {
+          await Promise.resolve();
+        });
+
+        expect(screen.queryByText('Auto Close')).not.toBeInTheDocument();
+        expect(resolved).toBe('Overlay removed');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
 
   describe('overlayStore', () => {
@@ -204,7 +243,7 @@ describe('Overlay System', () => {
     beforeEach(() => {
       const overlayContainer = document.createElement('div');
       overlayContainer.id = 'overlay-container';
-      
+
       document.body.appendChild(overlayContainer);
     });
 
@@ -231,7 +270,9 @@ describe('Overlay System', () => {
       fireEvent.mouseDown(document.body);
       fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
 
-      await act(async () => { await Promise.resolve(); });
+      await act(async () => {
+        await Promise.resolve();
+      });
 
       expect(screen.getByText('Should stay')).toBeInTheDocument();
     });
@@ -258,7 +299,9 @@ describe('Overlay System', () => {
 
       fireEvent.mouseDown(document.body);
 
-      await act(async () => { await Promise.resolve(); });
+      await act(async () => {
+        await Promise.resolve();
+      });
 
       expect(screen.queryByText('Close me')).not.toBeInTheDocument();
       expect(resolved).toBe('Overlay removed');
@@ -281,7 +324,9 @@ describe('Overlay System', () => {
 
       fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
 
-      await act(async () => { await Promise.resolve(); });
+      await act(async () => {
+        await Promise.resolve();
+      });
 
       expect(screen.queryByText('Close key')).not.toBeInTheDocument();
     });
@@ -305,7 +350,9 @@ describe('Overlay System', () => {
 
       fireEvent.mouseDown(document.body);
 
-      await act(async () => { await Promise.resolve(); });
+      await act(async () => {
+        await Promise.resolve();
+      });
 
       expect(screen.getByText('First')).toBeInTheDocument();
       expect(screen.queryByText('Second')).not.toBeInTheDocument();
