@@ -12,11 +12,7 @@ export const overlayReducer = (state: OverlayState, action: OverlayAction): Over
         stack: [...state.stack, action.payload],
       };
 
-    case 'POP':
-      return {
-        ...state,
-        stack: state.stack.slice(0, -1),
-      };
+    // POP action was removed; using REMOVE with overlayKey instead
 
     case 'REMOVE':
       return {
