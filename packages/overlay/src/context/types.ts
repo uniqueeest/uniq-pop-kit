@@ -25,7 +25,6 @@ export type OverlayState = {
 
 export type OverlayAction =
   | { type: 'PUSH'; payload: OverlayStackItem }
-  | { type: 'POP' }
   | { type: 'REMOVE'; payload: { overlayKey: string } }
   | { type: 'CLEAR' };
 
