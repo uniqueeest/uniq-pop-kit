@@ -83,10 +83,10 @@ function YourComponent() {
 Opens an overlay and returns a Promise.
 
 ```tsx
-const result = await overlay.open(
-  <YourOverlay overlayKey="unique-key" />,
-  { duration: 3000 } // Automatically closes after 3 seconds (optional)
-);
+const result = await overlay.open(<YourOverlay overlayKey="unique-key" />, {
+  duration: 3000, // Automatically closes after 3 seconds (optional)
+  dismissOnInteraction: true, // Closes when user clicks outside or presses ESC (optional, default: false)
+});
 ```
 
 ### overlay.close(overlayKey)
@@ -120,6 +120,7 @@ The `OverlayProps` type includes the following properties:
 - `overlayKey` (required): Unique identifier for the overlay
 - `resolve`: Function to return the overlay result and close it
 - `duration`: Time in milliseconds before auto-closing
+- `dismissOnInteraction`: Whether to close overlay on user interaction (click/touch outside or ESC key)
 
 ## Important Notes
 

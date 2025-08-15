@@ -81,10 +81,10 @@ function YourComponent() {
 오버레이를 열고 Promise를 반환합니다.
 
 ```tsx
-const result = await overlay.open(
-  <YourOverlay overlayKey="unique-key" />,
-  { duration: 3000 } // 3초 후 자동으로 닫힘 (선택사항)
-);
+const result = await overlay.open(<YourOverlay overlayKey="unique-key" />, {
+  duration: 3000, // 3초 후 자동으로 닫힘 (선택사항)
+  dismissOnInteraction: true, // 외부 클릭이나 ESC 키로 닫기 (선택사항, 기본값: false)
+});
 ```
 
 ### overlay.close(overlayKey)
@@ -118,6 +118,7 @@ const overlays = useOverlay();
 - `overlayKey` (필수): 오버레이의 고유 식별자
 - `resolve`: 오버레이 결과값을 반환하고 닫는 함수
 - `duration`: 자동으로 닫히는 시간 (ms)
+- `dismissOnInteraction`: 사용자 상호작용(외부 클릭/터치 또는 ESC 키)으로 오버레이를 닫을지 여부
 
 ## 주의사항
 
